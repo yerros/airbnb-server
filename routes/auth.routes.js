@@ -15,7 +15,7 @@ router.get(
   passport.authenticate("facebook", { session: false }),
   (req, res) => {
     const user = req.user;
-    res.redirect(`http://localhost:3000?token=${user.token}`);
+    res.redirect(`${process.env.frontend}?token=${user.token}`);
   }
 );
 
@@ -29,7 +29,7 @@ router.get(
   passport.authenticate("google", { session: false }),
   (req, res) => {
     const user = req.user;
-    res.redirect(`http://localhost:3000?token=${user.token}`);
+    res.redirect(`${process.env.frontend}?token=${user.token}`);
   }
 );
 
@@ -100,7 +100,7 @@ router.post("/login", async (req, res) => {
         });
       }
       let user = await User.findOne({ authyId: authyId });
-      res.send(`http://localhost:3000?token=${user.token}`);
+      res.send(`${process.env.frontend}?token=${user.token}`);
     });
   }
 });
