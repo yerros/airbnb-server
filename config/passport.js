@@ -8,6 +8,7 @@ const TwitterStrategy = require("passport-twitter").Strategy;
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 const jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+const { generateToken, setUser } = require("../helper");
 const secretOrKey = config.JWT.secret;
 
 passport.serializeUser((user, done) => {
@@ -19,21 +20,6 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((obj, done) => {
   done(null, obj);
 });
-
-const generateToken = user => {
-  return jwt.sign(user, config.JWT.secret, {
-    expiresIn: 3600000000
-  });
-};
-
-// Set User info
-const setUser = request => {
-  return {
-    _id: request._id,
-    email: request.email,
-    role: request.role
-  };
-};
 
 //Facebook Configuration
 passport.use(

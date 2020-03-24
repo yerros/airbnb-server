@@ -21,6 +21,7 @@ app.use("/auth", require("./routes/auth.routes"));
 app.use("/", requireAuth, require("./routes/index.routes"));
 app.use("/category", requireAuth, require("./routes/category.routes"));
 app.use("/order", requireAuth, require("./routes/order.routes"));
+app.use("/favorite", requireAuth, require("./routes/favorite.routes"));
 
 // initialize app
 const PORT = process.env.PORT || 5000;

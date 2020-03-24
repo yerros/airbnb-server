@@ -17,6 +17,9 @@ const ids = {
   },
   JWT: {
     secret: "BambangNakal"
+  },
+  Authy: {
+    key: process.env.authy_key
   }
 };
 module.exports = ids;
