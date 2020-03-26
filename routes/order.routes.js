@@ -124,7 +124,13 @@ router.post("/transaction", async (req, res) => {
     );
     if (order) {
       const token = order.host.notification;
+      const tokenGuest = await User.findOne({ _id: order.guest });
       await sendMail(order);
+      await sendNotification(
+        tokenGuest.notification,
+        "You received new Order",
+        "lorem ipsum dolor)"
+      );
       await sendNotification(
         token,
         "You received new Order",
