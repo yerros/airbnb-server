@@ -4,7 +4,7 @@ const User = require("../models/user.model");
 const OrderModel = require("../models/order.model");
 const passport = require("../config/passport");
 const config = require("../config/oauth");
-const { setUser, generateToken, sendNotification } = require("../helper");
+const { setUser, generateToken } = require("../helper");
 const requireAuth = passport.authenticate("jwt", { session: false });
 const authy = require("authy")(config.Authy.key);
 
@@ -20,7 +20,6 @@ router.post("/subscribe", requireAuth, async (req, res) => {
       console.log(err)
     );
   }
-  sendNotification(token.notification, "tes from db", "body db");
   res.status(201).json({ status: "subscription success" });
 });
 //
