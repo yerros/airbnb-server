@@ -4,7 +4,7 @@ const User = require("../models/user.model");
 const OrderModel = require("../models/order.model");
 const passport = require("../config/passport");
 const config = require("../config/oauth");
-const { setUser, generateToken } = require("../helper");
+const { setUser, generateToken, sendNotification } = require("../helper");
 const requireAuth = passport.authenticate("jwt", { session: false });
 const authy = require("authy")(config.Authy.key);
 
@@ -12,6 +12,7 @@ const authy = require("authy")(config.Authy.key);
 router.post("/subscribe", requireAuth, async (req, res) => {
   const subscription = req.body;
   const token = await User.findOne({ _id: req.user._id });
+  sendNotification(subscription, "tes", "body tes");
   if (!token.notification) {
     console.log("not");
     const user = await User.findOne({ _id: req.user._id });
