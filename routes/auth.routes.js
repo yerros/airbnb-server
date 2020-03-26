@@ -12,7 +12,6 @@ const authy = require("authy")(config.Authy.key);
 router.post("/subscribe", requireAuth, async (req, res) => {
   const subscription = req.body;
   const token = await User.findOne({ _id: req.user._id });
-  sendNotification(subscription, "tes", "body tes");
   if (!token.notification) {
     console.log("not");
     const user = await User.findOne({ _id: req.user._id });
@@ -21,6 +20,7 @@ router.post("/subscribe", requireAuth, async (req, res) => {
       console.log(err)
     );
   }
+  sendNotification(token.notification, "tes from db", "body db");
   res.status(201).json({ status: "subscription success" });
 });
 //
