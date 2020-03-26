@@ -125,7 +125,11 @@ router.post("/transaction", async (req, res) => {
     if (order) {
       const token = order.host.notification;
       await sendMail(order);
-      await sendNotification(token);
+      await sendNotification(
+        token,
+        "You received new Order",
+        "lorem ipsum dolor)"
+      );
     }
   }
 });
