@@ -1,6 +1,8 @@
 const express = require("express");
 const Order = require("../models/order.model");
+const User = require("../models/user.model");
 const midtransClient = require("midtrans-client");
+const { sendMail, sendNotification } = require("../helper");
 const router = express.Router();
 
 // @route        GET /order/
@@ -65,7 +67,14 @@ router.post("/", async (req, res) => {
       return res.send("error");
     }
     const order = new Order(data);
+    const token = await User.findOne({ _id: data.guest });
     await order.save();
+    await sendMail(order);
+    await sendNotification(
+      token.notification,
+      `Order ${order._id} Received`,
+      "Thank you for your order, please compleet the payment"
+    );
     res.send(order);
   } catch (error) {
     console.log(error);
@@ -105,11 +114,19 @@ router.get("/get/token", (req, res) => {
 // @access       private (admin / host)
 router.post("/transaction", async (req, res) => {
   const { transaction_status, order_id } = req.body;
+  const order = await Order.findOne({ _id: order_id }).populate(
+    "property guest"
+  );
   if (transaction_status === "capture" || transaction_status === "settlement") {
     await OrderModel.findByIdAndUpdate(
       { _id: order_id },
       { $set: { status: "PAID" } }
     );
+    if (order) {
+      const token = order.host.notification;
+      await sendMail(order);
+      await sendNotification(token);
+    }
   }
 });
 

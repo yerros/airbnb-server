@@ -20,4 +20,6 @@ const PropertySchema = mongoose.Schema({
   }
 });
 
+PropertySchema.index({ "$**": "text" });
+
 module.exports = mongoose.model("Property", PropertySchema);

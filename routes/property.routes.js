@@ -24,6 +24,41 @@ router.get("/", async (req, res) => {
   res.send(property);
 });
 
+// @route        GET /property/
+// @desc         List Property
+// @access       public
+router.get("/search/query", async (req, res) => {
+  const { q, category, price } = req.query;
+  let property = await Property.find().populate({
+    path: "category",
+    select: ["category_name", "category_description"]
+  });
+  if (q) {
+    property = await Property.find({ $text: { $search: q } }).populate({
+      path: "category",
+      select: ["category_name", "category_description"]
+    });
+    return res.send(property);
+  }
+  if (category) {
+    property = await Property.find({ category: category }).populate({
+      path: "category",
+      select: ["category_name", "category_description"]
+    });
+    return res.send(property);
+  }
+  if (price) {
+    property = await Property.find({
+      price: { $lte: price, $gte: 0 }
+    }).populate({
+      path: "category",
+      select: ["category_name", "category_description"]
+    });
+    return res.send(property);
+  }
+  res.send(property);
+});
+
 // @route        GET /property/:id
 // @desc         SingleList Property
 // @access       public

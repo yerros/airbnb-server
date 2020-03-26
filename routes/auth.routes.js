@@ -8,6 +8,22 @@ const { setUser, generateToken } = require("../helper");
 const requireAuth = passport.authenticate("jwt", { session: false });
 const authy = require("authy")(config.Authy.key);
 
+//subcribe notification
+router.post("/subscribe", requireAuth, async (req, res) => {
+  const subscription = req.body;
+  const token = await User.findOne({ _id: req.user._id });
+  if (!token.notification) {
+    console.log("not");
+    const user = await User.findOne({ _id: req.user._id });
+    const newUser = { user, notification: subscription };
+    await User.findByIdAndUpdate(req.user._id, newUser).catch(err =>
+      console.log(err)
+    );
+  }
+  res.status(201).json({ status: "subscription success" });
+});
+//
+
 // facebook routes
 router.get("/facebook", passport.authenticate("facebook", { scope: "email" }));
 router.get(

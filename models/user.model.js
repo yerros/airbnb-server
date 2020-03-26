@@ -19,6 +19,7 @@ const UserSchema = new mongoose.Schema({
     default: "guest"
   },
   token: String,
+  notification: Object,
   property: {
     type: mongoose.Types.ObjectId,
     ref: "Property"
