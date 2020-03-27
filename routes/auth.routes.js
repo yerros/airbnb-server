@@ -12,7 +12,10 @@ const authy = require("authy")(config.Authy.key);
 router.post("/subscribe", requireAuth, async (req, res) => {
   const subscription = req.body;
   const token = await User.findOne({ _id: req.user._id });
-  if (!token.notification) {
+  if (
+    !token.notification ||
+    token.notification.endpoint !== subscription.endpoint
+  ) {
     console.log("not");
     const user = await User.findOne({ _id: req.user._id });
     const newUser = { user, notification: subscription };
