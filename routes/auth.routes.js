@@ -4,40 +4,13 @@ const User = require("../models/user.model");
 const OrderModel = require("../models/order.model");
 const passport = require("../config/passport");
 const config = require("../config/oauth");
-const {
-  setUser,
-  generateToken,
-  sendMail,
-  sendNotification
-} = require("../helper");
+const { setUser, generateToken } = require("../helper");
 const requireAuth = passport.authenticate("jwt", { session: false });
 const authy = require("authy")(config.Authy.key);
 
-router.get("/tes", async (req, res) => {
-  const user = await OrderModel.findOne({
-    _id: "5e7e5d039dd46f0017b511ff"
-  }).populate("property guest host");
-
-  const host = await User.findOne({ _id: user.property.host });
-
-  const userToken = user.guest.notification;
-  const hostToken = host.notification;
-  await sendNotification(
-    hostToken,
-    "You received new order",
-    "Congratulations"
-  );
-  await sendNotification(
-    userToken,
-    "You payment has been received",
-    "Congratulations"
-  );
-  res.send({ userToken, hostToken });
-});
 //subcribe notification
 router.post("/subscribe", requireAuth, async (req, res) => {
   const subscription = req.body;
-  console.log(subscription);
   const token = await User.findOne({ _id: req.user._id });
   if (
     !token.notification ||
@@ -175,19 +148,16 @@ router.post("/transaction", async (req, res) => {
       { $set: { status: "PAID" } }
     );
     if (order) {
-      const host = await User.findOne({ _id: order.property.host });
-
-      const guestToken = order.guest.notification;
-      const hostToken = host.notification;
-
+      const token = order.host.notification;
+      const tokenGuest = await User.findOne({ _id: order.guest });
       await sendMail(order);
       await sendNotification(
-        guestToken,
-        "Your Payment has been received",
+        tokenGuest.notification,
+        "You received new Order",
         "lorem ipsum dolor)"
       );
       await sendNotification(
-        hostToken,
+        token,
         "You received new Order",
         "lorem ipsum dolor)"
       );
