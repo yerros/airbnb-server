@@ -136,11 +136,29 @@ router.put("/user/:id", requireAuth, async (req, res) => {
 
 router.post("/transaction", async (req, res) => {
   const { transaction_status, order_id } = req.body;
+  const order = await Order.findOne({ _id: order_id }).populate(
+    "property guest"
+  );
   if (transaction_status === "capture" || transaction_status === "settlement") {
     await OrderModel.findByIdAndUpdate(
       { _id: order_id },
-      { $set: { status: "paid" } }
+      { $set: { status: "PAID" } }
     );
+    if (order) {
+      const token = order.host.notification;
+      const tokenGuest = await User.findOne({ _id: order.guest });
+      await sendMail(order);
+      await sendNotification(
+        tokenGuest.notification,
+        "You received new Order",
+        "lorem ipsum dolor)"
+      );
+      await sendNotification(
+        token,
+        "You received new Order",
+        "lorem ipsum dolor)"
+      );
+    }
   }
 });
 
