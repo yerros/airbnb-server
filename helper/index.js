@@ -118,7 +118,7 @@ const noticeOrder = async () => {
 
 const sendNotification = async (subscription, title, body) => {
   const payload = JSON.stringify({ title: title, body: body });
-
+  console.log("notigication send");
   // Pass object into sendNotification
   webpush
     .sendNotification(subscription, payload)
