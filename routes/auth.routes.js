@@ -166,7 +166,7 @@ router.put("/user/:id", requireAuth, async (req, res) => {
 
 router.post("/transaction", async (req, res) => {
   const { transaction_status, order_id } = req.body;
-  const order = await Order.findOne({ _id: order_id }).populate(
+  const order = await OrderModel.findOne({ _id: order_id }).populate(
     "property guest"
   );
   if (transaction_status === "capture" || transaction_status === "settlement") {
