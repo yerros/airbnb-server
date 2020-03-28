@@ -174,24 +174,22 @@ router.post("/transaction", async (req, res) => {
       { _id: order_id },
       { $set: { status: "PAID" } }
     );
-    if (order) {
-      const host = await User.findOne({ _id: order.property.host });
+    const host = await User.findOne({ _id: order.property.host });
 
-      const userToken = order.guest.notification;
-      const hostToken = host.notification;
-      await sendNotification(
-        hostToken,
-        "You received new order",
-        "Congratulations"
-      );
-      await sendNotification(
-        userToken,
-        "You payment has been received",
-        "Congratulations"
-      );
+    const userToken = order.guest.notification;
+    const hostToken = host.notification;
+    await sendNotification(
+      hostToken,
+      "You received new order",
+      "Congratulations"
+    );
+    await sendNotification(
+      userToken,
+      "You payment has been received",
+      "Congratulations"
+    );
 
-      await sendMail(order);
-    }
+    await sendMail(order);
   }
 });
 
